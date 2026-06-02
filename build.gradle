@@ -1,0 +1,114 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    // Sonatype Nexus publish — handles staging + close + release automatically
+    id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
+}
+
+group = 'com.captchasonic'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Proto stubs vendored in src/main/java/com/captchasonic/v1/
+// Generated from proto/captchasonic/v1/sonic.proto — self-contained, no external paths.
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+dependencies {
+    // gRPC transport (includes netty)
+    implementation 'io.grpc:grpc-netty-shaded:1.74.0'
+
+    // gRPC stubs and protobuf
+    implementation 'io.grpc:grpc-stub:1.74.0'
+    implementation 'io.grpc:grpc-protobuf:1.74.0'
+
+    // Protobuf runtime
+    implementation 'com.google.protobuf:protobuf-java:4.35.0'
+
+    // Guava (required by grpc-stub for ListenableFuture)
+    implementation 'com.google.guava:guava:33.4.0-jre'
+
+    // javax.annotation (required for @Generated annotation in older protoc outputs)
+    compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
+}
+
+signing {
+    def signingKey = System.getenv("SIGNING_KEY")
+    def signingPassword = System.getenv("SIGNING_PASSWORD")
+    if (signingKey) {
+        // CI mode — key passed via env var (GitHub Actions)
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    } else {
+        // Local mode — key stays in GPG keychain (safer)
+        useGpgCmd()
+    }
+    sign publishing.publications
+}
+
+javadoc {
+    failOnError = false
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl = uri("https://central.sonatype.com/api/v1/publisher/")
+            snapshotRepositoryUrl = uri("https://central.sonatype.com/api/v1/publisher/")
+            username = System.getenv("SONATYPE_USERNAME") ?: ''
+            password = System.getenv("SONATYPE_PASSWORD") ?: ''
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = 'captchasonic'
+            from components.java
+
+            pom {
+                name = 'CaptchaSonic Java SDK'
+                description = 'Official Java gRPC client for the CaptchaSonic CAPTCHA solving API'
+                url = 'https://captchasonic.com'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'captchasonic'
+                        name = 'CaptchaSonic'
+                        email = 'support@captchasonic.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/captchasonic/sonic-sdk.git'
+                    developerConnection = 'scm:git:ssh://github.com/captchasonic/sonic-sdk.git'
+                    url = 'https://github.com/captchasonic/sonic-sdk'
+                }
+            }
+        }
+    }
+}
