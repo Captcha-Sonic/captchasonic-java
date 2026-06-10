@@ -2,10 +2,11 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'signing'
+    id 'com.gradleup.nmcp' version '1.4.4'
 }
 
 group = 'com.captchasonic'
-version = '1.0.2'
+version = '1.0.3'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -64,7 +65,13 @@ javadoc {
     options.addStringOption('Xdoclint:none', '-quiet')
 }
 
-
+nmcp {
+    publishAllProjectsProbablyBreakingProjectIsolation {
+        username = System.getenv("SONATYPE_USERNAME") ?: ''
+        password = System.getenv("SONATYPE_PASSWORD") ?: ''
+        publicationType = "AUTOMATIC"
+    }
+}
 
 publishing {
     publications {
