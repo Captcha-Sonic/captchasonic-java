@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.captchasonic'
-version = '1.0.3'
+version = '1.0.4'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -66,7 +66,7 @@ javadoc {
 }
 
 nmcp {
-    publishAllProjectsProbablyBreakingProjectIsolation {
+    publishAllPublicationsToCentralPortal {
         username = System.getenv("SONATYPE_USERNAME") ?: ''
         password = System.getenv("SONATYPE_PASSWORD") ?: ''
         publicationType = "AUTOMATIC"
