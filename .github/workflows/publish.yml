@@ -16,11 +16,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build and verify
         run: ./gradlew clean build
-
-      - name: Publish to Maven Local (verify artifacts)
-        run: ./gradlew publishToMavenLocal
 
       - name: Publish to Maven Central
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository

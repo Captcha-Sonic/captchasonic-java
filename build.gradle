@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.captchasonic'
-version = '1.0.0'
+version = '1.0.1'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -104,9 +104,9 @@ publishing {
                 }
 
                 scm {
-                    connection = 'scm:git:git://github.com/captchasonic/sonic-sdk.git'
-                    developerConnection = 'scm:git:ssh://github.com/captchasonic/sonic-sdk.git'
-                    url = 'https://github.com/captchasonic/sonic-sdk'
+                    connection = 'scm:git:git://github.com/Captcha-Sonic/captchasonic-java.git'
+                    developerConnection = 'scm:git:ssh://github.com/Captcha-Sonic/captchasonic-java.git'
+                    url = 'https://github.com/Captcha-Sonic/captchasonic-java'
                 }
             }
         }
